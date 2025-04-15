@@ -26,8 +26,18 @@ class User extends Authenticatable
             ->withPivot('created_at', 'created_by', 'deleted_at', 'deleted_by')
             ->withTimestamps();
     }
+    
+    
     public function hasPermission($permissionCode)
     {
-        return $this->roles->flatMap(fn($role) => $role->permissions)->pluck('code')->contains($permissionCode);
+        if (!$this->roles || $this->roles->isEmpty()) 
+        {
+            return false;
+        }
+        $permissions = $this->roles->flatMap(function ($role)
+        {
+            return $role->permissions ?? collect();
+        })->pluck('code');
+        return $permissions->contains($permissionCode);
     }
 }
