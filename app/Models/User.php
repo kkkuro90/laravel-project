@@ -30,6 +30,10 @@ class User extends Authenticatable
     
     public function hasPermission($permissionCode)
     {
+        if ($this->deleted_at !== null)
+        {
+            return false;
+        }
         if (!$this->roles || $this->roles->isEmpty()) 
         {
             return false;
