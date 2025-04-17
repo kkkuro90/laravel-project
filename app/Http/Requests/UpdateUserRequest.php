@@ -2,6 +2,7 @@
 namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
 class UpdateUserRequest extends FormRequest
 {
     public function authorize()
@@ -10,6 +11,7 @@ class UpdateUserRequest extends FormRequest
     }
     public function rules()
     {
+        $id = $this->route('user');
         return [
             'username' => [
                 'sometimes',
@@ -17,13 +19,13 @@ class UpdateUserRequest extends FormRequest
                 'min:3',
                 'max:50',
                 'regex:/^[a-zA-Z0-9_]+$/',
-                'unique:users,username,' . $this->route('user'),
+                Rule::unique('users', 'username')->ignore($id),
             ],
             'email' => [
                 'sometimes',
                 'string',
                 'email',
-                'unique:users,email,' . $this->route('user'),
+                Rule::unique('users', 'email')->ignore($id),
             ],
             'password' => [
                 'nullable',
